@@ -71,6 +71,7 @@ app.use(
 const User = require('./models/User');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 
 passport.serializeUser((user, done) => {
   done(null, user._id);
@@ -104,6 +105,36 @@ passport.use(
   })
 )
 
+const GithubStrategy = require('passport-github').Strategy;
+
+passport.use(
+  new GithubStrategy(
+    {
+      clientID: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+      callbackURL: 'http://127.0.0.1:3000/auth/github/callback'
+    },
+    (accessToken, refreshToken, profile, done) => {
+      // find a user with profile.id as githubId or create one
+      User.findOne({ githubId: profile.id })
+        .then(found => {
+          if (found !== null) {
+            // user already exists
+            done(null, found);
+          } else {
+            // no user with that github id
+            return User.create({ githubId: profile.id }).then(dbUser => {
+              done(null, dbUser);
+            })
+          }
+        })
+        .catch(error => {
+          done(error);
+        })
+    }
+  )
+)
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -121,8 +152,9 @@ app.locals.title = 'Express - Generated with IronGenerator';
 
 
 const index = require('./routes/index');
-const { compareSync } = require('bcrypt');
 app.use('/', index);
 
+const auth = require('./routes/auth');
+app.use('/', auth);
 
 module.exports = app;
