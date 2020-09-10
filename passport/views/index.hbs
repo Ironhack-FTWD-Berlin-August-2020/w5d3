@@ -1,9 +1,14 @@
-<h1>{{title}}</h1>
-<h2>
-  Welcome {{#if user}}
+<h1 style="display: flex; justify-content: center; align-items: center;">
+  Welcome 
+  {{#if user.name}}
+    {{user.name}}
+  {{else}}
     {{user.username}}
- {{/if}} ❤️
-</h2>
+  {{/if}}
+  {{#if user.avatar}}
+    <img src="{{user.avatar}}" style="height: 100px; border-radius: 50%; margin-left: 20px">
+  {{/if}}
+</h1>
 
 {{#unless user}}
 <a href="/login">Log in</a>

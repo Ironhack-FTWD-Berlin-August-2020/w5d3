@@ -116,6 +116,7 @@ passport.use(
     },
     (accessToken, refreshToken, profile, done) => {
       // find a user with profile.id as githubId or create one
+      console.log(profile);
       User.findOne({ githubId: profile.id })
         .then(found => {
           if (found !== null) {
@@ -123,7 +124,7 @@ passport.use(
             done(null, found);
           } else {
             // no user with that github id
-            return User.create({ githubId: profile.id }).then(dbUser => {
+            return User.create({ githubId: profile.id, name: profile._json.login, avatar: profile._json.avatar_url }).then(dbUser => {
               done(null, dbUser);
             })
           }
