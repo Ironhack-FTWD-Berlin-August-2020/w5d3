@@ -5,7 +5,12 @@ const userSchema = new Schema({
   password: String,
   githubId: String,
   avatar: String,
-  name: String
+  name: String,
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  }
 });
 
 const User = mongoose.model('User', userSchema);

@@ -158,4 +158,7 @@ app.use('/', index);
 const auth = require('./routes/auth');
 app.use('/', auth);
 
+const rooms = require('./routes/rooms');
+app.use('/rooms', rooms);
+
 module.exports = app;
